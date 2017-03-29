@@ -27,31 +27,14 @@ public class PhotoFun extends AppCompatActivity {
         myNewImageView = (ImageView) findViewById(R.id.newImage);
 
         Button grayFilterButton = (Button) findViewById(R.id.grayFilterButton);
-        grayFilterButton.setOnClickListener(new grayFilterButtonListener());
+        grayFilterButton.setOnClickListener(new FilterButtonListener());
         Button brightnessFilterButton = (Button) findViewById(R.id.brightnessFilterButton);
-        brightnessFilterButton.setOnClickListener(new brightnessFilterButtonListener());
+        brightnessFilterButton.setOnClickListener(new FilterButtonListener());
     }
 
     public int grayTransform(int inPixel) {
         int intensity = (Color.red(inPixel) + Color.green(inPixel) + Color.blue(inPixel)) / 3;
         return Color.argb(Color.alpha(inPixel), intensity, intensity, intensity);
-    }
-
-    private class grayFilterButtonListener implements View.OnClickListener {
-        public void onClick(View button) {
-            int width = myOriginalBmp.getWidth();
-            int height = myOriginalBmp.getHeight();
-
-            Bitmap newBmp = Bitmap.createBitmap(width, height, myOriginalBmp.getConfig());
-
-            for (int w = 0; w < width; w++) {
-                for (int h = 0; h < height; h++) {
-                    int outPixel = grayTransform(myOriginalBmp.getPixel(w, h));
-                    newBmp.setPixel(w, h, outPixel);
-                }
-            }
-            myNewImageView.setImageBitmap(newBmp);
-        }
     }
 
     protected int constrain(int color) {
@@ -72,7 +55,7 @@ public class PhotoFun extends AppCompatActivity {
         return Color.argb(Color.alpha(inPixel), red, green, blue);
     }
 
-    private class brightnessFilterButtonListener implements View.OnClickListener {
+    private class FilterButtonListener implements View.OnClickListener {
         public void onClick(View button) {
             int width = myOriginalBmp.getWidth();
             int height = myOriginalBmp.getHeight();
@@ -80,8 +63,18 @@ public class PhotoFun extends AppCompatActivity {
             Bitmap newBmp = Bitmap.createBitmap(width, height, myOriginalBmp.getConfig());
 
             for (int w = 0; w < width; w++) {
+                int outPixel = 0;
                 for (int h = 0; h < height; h++) {
-                    int outPixel = brightnessTransform(myOriginalBmp.getPixel(w, h));
+                    if (button.getId() == R.id.grayFilterButton) {
+                        outPixel = grayTransform(myOriginalBmp.getPixel(w, h));
+
+                    }  else if (button.getId() == R.id.brightnessFilterButton) {
+                        outPixel = brightnessTransform(myOriginalBmp.getPixel(w, h));
+
+                    }
+                    else {
+                        // TBD handle error
+                    }
                     newBmp.setPixel(w, h, outPixel);
                 }
             }
